@@ -18,7 +18,7 @@ function createTiles() {
     tile.dataset.index = index;
     if (value) {
         tile.textContent = value;
-        tile.style.backgroundImage = `url("images/${background}")`;
+        tile.style.backgroundImage = `url("images/backgrounds/${background}")`; // ✅ new
 
         // Calculate correct image piece based on the *value*, not index
         const originalIndex = value - 1;
@@ -105,9 +105,11 @@ function checkWin() {
 }
 
 function changeBackground() {
-  background = document.getElementById("backgroundSelector").value;
-  createTiles();
+  const selector = document.getElementById("backgroundSelector");
+  background = selector.value;
+  createTiles(); // re-render puzzle with new background
 }
+
 
 window.onload = () => {
   createTiles();

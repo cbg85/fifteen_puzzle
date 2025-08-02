@@ -7,18 +7,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username']);
     $password = $_POST['password'];
 
-    $stmt = $conn->prepare("SELECT id, password_hash FROM users WHERE username = ?");
+    $stmt = $conn->prepare("SELECT id, password_hash, is_admin FROM users WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $stmt->store_result();
     
     if ($stmt->num_rows === 1) {
-        $stmt->bind_result($id, $hash);
+        $stmt->bind_result($id, $hash, $is_admin);
         $stmt->fetch();
         if (password_verify($password, $hash)) {
             $_SESSION['user_id'] = $id;
             $_SESSION['username'] = $username;
-            header("Location: game.html"); // redirect to game
+            $_SESSION['is_admin'] = $is_admin; // ✅ mark session as admin if user is admin
+            if ($is_admin) {
+            header("Location: admin/dashboard.php");
+        } else {
+            header("Location: game.php");
+        }
+ // redirect to game
             exit;
         } else {
             $error = "Incorrect password.";
